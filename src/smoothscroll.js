@@ -1,7 +1,38 @@
 'use strict';
 
+function saveAsGlobal(name, data) {
+  window[name] = data;
+}
+
+function hasGlobal(name) {
+  return window[name] && Object.keys(window[name]).length > 0;
+}
+
+/*
+var original = {
+    scroll: w.scroll || w.scrollTo,
+    scrollBy: w.scrollBy,
+    elementScroll: Element.prototype.scroll || scrollElement,
+    elementScrollBy: Element.prototype.scrollBy,
+    scrollIntoView: Element.prototype.scrollIntoView
+  };
+
+*/
+
+function unsetPolyfill() {
+  window.scroll = window.scrollTo = window.__ORIGINAL_SCROLL_METHODS__.scroll;
+
+  window.scrollBy = window.__ORIGINAL_SCROLL_METHODS__.scrollBy;
+  Element.prototype.scroll = Element.prototype.scrollTo =
+    window.__ORIGINAL_SCROLL_METHODS__.elementScroll;
+  Element.prototype.scrollBy =
+    window.__ORIGINAL_SCROLL_METHODS__.elementScrollBy;
+  Element.prototype.scrollIntoView =
+    window.__ORIGINAL_SCROLL_METHODS__.scrollIntoView;
+}
+
 // polyfill
-function polyfill() {
+function setPolyfill() {
   // aliases
   var w = window;
   var d = document;
@@ -23,8 +54,13 @@ function polyfill() {
     scroll: w.scroll || w.scrollTo,
     scrollBy: w.scrollBy,
     elementScroll: Element.prototype.scroll || scrollElement,
+    elementScrollBy: Element.prototype.scrollBy,
     scrollIntoView: Element.prototype.scrollIntoView
   };
+
+  if (!hasGlobal('__ORIGINAL_SCROLL_METHODS__')) {
+    saveAsGlobal('__ORIGINAL_SCROLL_METHODS__', original);
+  }
 
   // define timing method
   var now =
@@ -422,8 +458,14 @@ function polyfill() {
 
 if (typeof exports === 'object' && typeof module !== 'undefined') {
   // commonjs
-  module.exports = { polyfill: polyfill };
+  module.exports = {
+    polyfill: setPolyfill,
+    unsetPolyfill: unsetPolyfill
+  };
 } else {
   // global
-  polyfill();
+  window.__SMOOTH_SCROLL__ = {
+    enable: setPolyfill,
+    disable: unsetPolyfill
+  };
 }
