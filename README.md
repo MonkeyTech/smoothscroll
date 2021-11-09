@@ -1,3 +1,81 @@
+# Smooth Scroll
+
+```js
+import smoothscroll from 'smoothscroll-polyfill';
+
+// kicks off the polyfill!
+smoothscroll.polyfill();
+
+// turns on the polyfill - override scroll methods (the same as 'polyfill')
+smoothscroll.enable();
+// turns off the polyfill - use default scroll methods
+smoothscroll.disable();
+// writes `polyfill`, `enable` and `disable` methods to window.__SMOOTH_SCROLL__
+smoothscroll.useGlobalMethods();
+```
+
+Also, these methods are available in `window` object after calling `useGlobalMethods()`:
+```js
+window.__SMOOTH_SCROLL__.polyfill();
+window.__SMOOTH_SCROLL__.enable();
+window.__SMOOTH_SCROLL__.disable();
+```
+
+If you need to use it as pure code - check out the `src/smoothscroll.local.js` file and take it to your project.
+```js
+// smoothscroll.local.js
+const INIT_OPTIONS = {
+ global: true
+};
+
+function initSmoothScroll(options = INIT_OPTIONS) {
+  ...
+  ...
+  ...
+
+  return {
+   polyfill: () => setPolyfill,
+   enable: () => setPolyfill,
+   disable: () => unsetPolyfill
+  };
+}
+
+initSmoothScroll()
+
+```
+
+**Usage**
+File contains next methods:
+ - `initSmoothScroll(options?: Options)`: - polyfill initialization. Returns the `PolyfillControlls`.
+```js
+
+type Options = {
+ global: boolean, // by dafult is 'true'
+}
+
+type PolyfillControlls = {
+ polyfill: () => void,
+ enable: () => void,
+ disable: () => void
+}
+
+const { polyfill, enable, disable } = initSmoothScroll()
+
+// kick off!
+polyfill();
+```
+
+.
+.
+.
+.
+.
+.
+
+**_Original doc below_**
+.
+.
+.
 # Smooth Scroll behavior polyfill
 
 The [Scroll Behavior specification](https://developer.mozilla.org/en/docs/Web/CSS/scroll-behavior) has been introduced as an extension of the `Window` interface to allow for the developer to opt in to native smooth scrolling. To date this has only been implemented in [_Chrome_, _Firefox_ and _Opera_](https://caniuse.com/#feat=css-scroll-behavior).

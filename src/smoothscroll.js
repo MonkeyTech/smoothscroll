@@ -456,16 +456,23 @@ function setPolyfill() {
   };
 }
 
+function useGlobalMethods() {
+  window.__SMOOTH_SCROLL__ = {
+    polyfill: setPolyfill,
+    enable: setPolyfill,
+    disable: unsetPolyfill
+  };
+}
+
 if (typeof exports === 'object' && typeof module !== 'undefined') {
   // commonjs
   module.exports = {
     polyfill: setPolyfill,
-    unsetPolyfill: unsetPolyfill
+    enable: setPolyfill,
+    disable: unsetPolyfill,
+    useGlobalMethods: useGlobalMethods
   };
 } else {
   // global
-  window.__SMOOTH_SCROLL__ = {
-    enable: setPolyfill,
-    disable: unsetPolyfill
-  };
+  useGlobalMethods();
 }
